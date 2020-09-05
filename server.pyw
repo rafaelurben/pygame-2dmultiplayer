@@ -93,7 +93,7 @@ def threaded_interface():
         clock.tick(60)
 
 def threaded_client(conn, addr, playerid):
-    print(f"Neue Verbindung: { addr } (Spieler { playerid })")
+    print(f"Neue Verbindung: { addr } - #{ playerid }")
 
     x, y = mymap.random_spawn()
     player = Player(id=playerid, addr=addr, x=x, y=y)
@@ -101,35 +101,41 @@ def threaded_client(conn, addr, playerid):
     conn.send(pickle.dumps((player, mymap)))
     player.name = pickle.loads(conn.recv(2048))
 
+    print(f"Spieler { playerid } heisst '{ player.name }'.")
+
     while True:
         try:
             data = pickle.loads(conn.recv(2048))
 
             if not data:
-                print(f"Verbindung zu { player.name } getrennt!")
+                print(f"Keine Daten von { player.name } erhalten!")
                 break
             else:
                 player.process(mymap, data)
 
             conn.send(pickle.dumps(Player.players))
-        except Exception as e:
-            print("Error:",e)
+        except EOFError:
+            print(f"{ player.name } hat die Verbindung verloren.")
             break
-
-    print(f"{ player.name } hat die Verbindung verloren.")
+        except Exception as e:
+            print(f"Die Verbindung von { player.name } wurde unterbrochen. Error:",e)
+            break
 
     conn.close()
     player.hide()
 
 def main():
-    start_new_thread(threaded_interface, tuple())
+    try:
+        start_new_thread(threaded_interface, tuple())
 
-    currentPlayer = 0
-    while True:
-        conn, addr = s.accept()
-        start_new_thread(threaded_client, (conn, addr, currentPlayer))
+        currentPlayer = 0
+        while True:
+            conn, addr = s.accept()
+            start_new_thread(threaded_client, (conn, addr, currentPlayer))
 
-        currentPlayer += 1
+            currentPlayer += 1
+    except KeyboardInterrupt:
+        quit()
 
 if __name__ == "__main__":
     main()

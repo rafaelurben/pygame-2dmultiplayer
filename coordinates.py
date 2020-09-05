@@ -11,6 +11,9 @@ asin = lambda v: math.degrees(math.asin(v))
 acos = lambda v: math.degrees(math.acos(v))
 atan = lambda v: math.degrees(math.atan(v))
 
+ceil = math.ceil
+floor = math.floor
+
 # Utility Functions
 
 def calculate_relative_pos(x, y, angle, distance):
