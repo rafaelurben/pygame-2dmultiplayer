@@ -26,28 +26,30 @@ print("Server gestartet, warte auf Verbindungen...")
 players = []
 
 def create_random_player(playerid):
-    players.append(Player(id=playerid, x=randint(50,250), y=randint(50,250), width=50, height=50, color=(randint(0,255),randint(0,255),randint(0,255))))
+    player = Player(id=playerid, x=randint(50,250), y=randint(50,250), width=50, height=50, color=(randint(0,255),randint(0,255),randint(0,255)))
+    players.append(player)
+    return player
 
-def threaded_client(conn, playerid):
-    conn.send(pickle.dumps(players[playerid]))
+def threaded_client(conn, player):
+    conn.send(pickle.dumps(player))
     while True:
         try:
             data = pickle.loads(conn.recv(2048))
 
             if not data:
-                print("Verbindung zu Spieler", playerid, "getrennt")
+                print("Verbindung zu Spieler", player.id, "getrennt")
                 break
             else:
-                players[playerid] = data
+                player.process(data)
 
             conn.send(pickle.dumps(players))
         except:
             break
 
-    print("Spieler",playerid,"hat die Verbindung verloren.")
+    print("Spieler",player.id,"hat die Verbindung verloren.")
 
     conn.close()
-    players[playerid].hide()
+    player.hide()
 
 currentPlayer = 0
 while True:
@@ -55,8 +57,8 @@ while True:
 
     print("Neue Verbindung:",addr, f"(Spieler {str(currentPlayer)})")
 
-    create_random_player(currentPlayer)
+    player = create_random_player(currentPlayer)
 
-    thread = start_new_thread(threaded_client, (conn, currentPlayer))
+    thread = start_new_thread(threaded_client, (conn, player))
 
     currentPlayer += 1

@@ -4,7 +4,7 @@
 import pygame
 from pygame_textinput import TextInput
 
-from network import Network
+from network import ClientNetwork
 from player import Player
 
 server = "localhost"
@@ -62,7 +62,7 @@ def showStartScreen():
 def main():
     showStartScreen()
 
-    network = Network(server=server, port=port)
+    network = ClientNetwork(server=server, port=port)
 
     try:
         player = network.player
@@ -74,7 +74,6 @@ def main():
 
     while True:
         clock.tick(60)
-        players = network.send(player)
 
         for event in pygame.event.get():
             if event.type == pygame.constants.QUIT:
@@ -85,17 +84,19 @@ def main():
             #     global win
             #     win = pygame.display.set_mode((event.w, event.h), pygame.constants.RESIZABLE)
 
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.constants.K_ESCAPE]:
+            print("Spiel durch ESC verlassen!")
+            return
+
+        players = player.update(win, keys, network)
+
         if not players:
             print("Verbindung zum Server verloren!")
             return
 
-        player.movement(win)
         redrawWindow(win, players)
-
-        keys = pygame.key.get_pressed()
-        if keys[pygame.constants.K_ESCAPE]:
-            print("Spiel durch ESC verlassen!")
-            return
 
 while True:          
     main()

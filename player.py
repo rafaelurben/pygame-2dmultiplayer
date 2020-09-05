@@ -33,20 +33,35 @@ class Player():
             if font:
                 win.blit(font.render(self.name, True, (0,0,0)), (self.x + self.width + 5, self.y + self.height + 5))
 
-    def movement(self, win):
-        keys = pygame.key.get_pressed()
+    def update(self, win, keys, network):
+        '''Client: Upload changes and download players'''
 
-        width = win.get_width()
-        height = win.get_height()
+        data = {
+            "win_width":    win.get_width(),
+            "win_height":   win.get_height(),
+            "move_left":    (keys[pygame.constants.K_LEFT]  or keys[pygame.constants.K_a]),
+            "move_right":   (keys[pygame.constants.K_RIGHT] or keys[pygame.constants.K_d]),
+            "move_up":      (keys[pygame.constants.K_UP]    or keys[pygame.constants.K_w]),
+            "move_down":    (keys[pygame.constants.K_DOWN]  or keys[pygame.constants.K_s]),
+        }
 
-        if (keys[pygame.constants.K_LEFT]   or keys[pygame.constants.K_a]) and self.x >= self.velocity:
+        return network.send_receive(data)
+
+    def process(self, data):
+        '''Server: Process the changes uploaded by the player'''
+
+        win_width = data["win_width"]
+        win_height = data["win_height"]
+
+        if data["move_left"]    and self.x >= self.velocity:
             self.x -= self.velocity
 
-        if (keys[pygame.constants.K_RIGHT]  or keys[pygame.constants.K_d]) and self.x + self.velocity + self.width <= width:
+        if data["move_right"]   and self.x + self.velocity + self.width <= win_width:
             self.x += self.velocity
 
-        if (keys[pygame.constants.K_UP]     or keys[pygame.constants.K_w]) and self.y >= self.velocity:
+        if data["move_up"]      and self.y >= self.velocity:
             self.y -= self.velocity
 
-        if (keys[pygame.constants.K_DOWN]   or keys[pygame.constants.K_s]) and self.y + self.velocity + self.height <= height:
+        if data["move_down"]    and self.y + self.velocity + self.height <= win_height:
             self.y += self.velocity
+

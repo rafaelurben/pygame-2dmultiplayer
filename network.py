@@ -4,7 +4,7 @@
 import socket
 import pickle
 
-class Network:
+class ClientNetwork:
     def __init__(self, server="localhost", port=5555):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server = server
@@ -21,7 +21,7 @@ class Network:
             print(f"Verbindung zu '{ self.server }' fehlgeschlagen!")
             return None
 
-    def send(self, data):
+    def send_receive(self, data):
         try:
             self.client.send(pickle.dumps(data))
             return pickle.loads(self.client.recv(2048))
