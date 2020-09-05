@@ -8,9 +8,11 @@ from random import randint
 from time import sleep
 
 from player import Player
+from maps import Map
 
 server = "0.0.0.0"
 port = 9898
+mymap = Map(width=800, height=400)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -30,23 +32,27 @@ def create_random_player(playerid):
     players.append(player)
     return player
 
-def threaded_client(conn, player):
-    conn.send(pickle.dumps(player))
+def threaded_client(conn, addr, playerid):
+    print(f"Neue Verbindung: { addr } (Spieler { playerid })")
+
+    player = create_random_player(playerid)
+
+    conn.send(pickle.dumps((player, mymap)))
     while True:
         try:
             data = pickle.loads(conn.recv(2048))
 
             if not data:
-                print("Verbindung zu Spieler", player.id, "getrennt")
+                print(f"Verbindung zu { player.name } getrennt")
                 break
             else:
-                player.process(data)
+                player.process(mymap, data)
 
             conn.send(pickle.dumps(players))
         except:
             break
 
-    print("Spieler",player.id,"hat die Verbindung verloren.")
+    print(f"{ player.name } hat die Verbindung verloren.")
 
     conn.close()
     player.hide()
@@ -54,11 +60,6 @@ def threaded_client(conn, player):
 currentPlayer = 0
 while True:
     conn, addr = s.accept()
-
-    print("Neue Verbindung:",addr, f"(Spieler {str(currentPlayer)})")
-
-    player = create_random_player(currentPlayer)
-
-    thread = start_new_thread(threaded_client, (conn, player))
+    thread = start_new_thread(threaded_client, (conn, addr, currentPlayer))
 
     currentPlayer += 1

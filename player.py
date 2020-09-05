@@ -33,25 +33,23 @@ class Player():
             if font:
                 win.blit(font.render(self.name, True, (0,0,0)), (self.x + self.width + 5, self.y + self.height + 5))
 
-    def update(self, win, keys, network):
+    def get_update_data(self, keys):
         '''Client: Upload changes and download players'''
 
         data = {
-            "win_width":    win.get_width(),
-            "win_height":   win.get_height(),
             "move_left":    (keys[pygame.constants.K_LEFT]  or keys[pygame.constants.K_a]),
             "move_right":   (keys[pygame.constants.K_RIGHT] or keys[pygame.constants.K_d]),
             "move_up":      (keys[pygame.constants.K_UP]    or keys[pygame.constants.K_w]),
             "move_down":    (keys[pygame.constants.K_DOWN]  or keys[pygame.constants.K_s]),
         }
 
-        return network.send_receive(data)
+        return data
 
-    def process(self, data):
+    def process(self, mymap, data):
         '''Server: Process the changes uploaded by the player'''
 
-        win_width = data["win_width"]
-        win_height = data["win_height"]
+        win_width = mymap.width
+        win_height = mymap.height
 
         if data["move_left"]    and self.x >= self.velocity:
             self.x -= self.velocity

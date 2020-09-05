@@ -10,7 +10,7 @@ class ClientNetwork:
         self.server = server
         self.port = port
         self.addr = (self.server, self.port)
-        self.player = self.connect()
+        self.player, self.map = self.connect()
 
     def connect(self):
         try:
@@ -28,3 +28,4 @@ class ClientNetwork:
         except socket.error as e:
             print("Fehler:",e)
             return None
+            

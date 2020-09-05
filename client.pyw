@@ -6,18 +6,15 @@ from pygame_textinput import TextInput
 
 from network import ClientNetwork
 from player import Player
+from maps import Map
 
 server = "localhost"
 port = 9898
 
-width = 500
-height = 500
-win = pygame.display.set_mode((width, height))
-# win = pygame.display.set_mode((width, height), pygame.constants.RESIZABLE)
-
 pygame.display.set_caption("Client")
 pygame.base.init()
 
+win = pygame.display.set_mode((500, 500))
 font = pygame.font.SysFont('Arial', 12)
 clock = pygame.time.Clock()
 
@@ -30,9 +27,10 @@ def redrawWindow(win, players):
 
 
 def showStartScreen():
-    global server
+    global server, win
 
     pygame.display.set_caption("Client")
+    win = pygame.display.set_mode((500, 500))
 
     textinput = TextInput(initial_string=server)
 
@@ -60,15 +58,20 @@ def showStartScreen():
         clock.tick(30)
 
 def main():
+    global win
+
     showStartScreen()
 
-    network = ClientNetwork(server=server, port=port)
-
     try:
+        network = ClientNetwork(server=server, port=port)
+
         player = network.player
         pygame.display.set_caption("Client - "+player.name)
 
-    except AttributeError:
+        mymap = network.map
+        win = pygame.display.set_mode((mymap.width, mymap.height))
+
+    except (AttributeError, TypeError):
         print("Verbindung konnte nicht hergestellt werden!")
         return
 
@@ -80,9 +83,6 @@ def main():
                 print("Fenster wurde geschlossen!")
                 pygame.base.quit()
                 exit()
-            # elif event.type == pygame.constants.VIDEORESIZE:
-            #     global win
-            #     win = pygame.display.set_mode((event.w, event.h), pygame.constants.RESIZABLE)
 
         keys = pygame.key.get_pressed()
 
@@ -90,7 +90,7 @@ def main():
             print("Spiel durch ESC verlassen!")
             return
 
-        players = player.update(win, keys, network)
+        players = network.send_receive(player.get_update_data(keys))
 
         if not players:
             print("Verbindung zum Server verloren!")
