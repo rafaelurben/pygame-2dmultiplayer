@@ -15,10 +15,11 @@ class Network:
     def connect(self):
         try:
             self.client.connect(self.addr)
-            print("Verbunden!")
+            print(f"Verbunden zu '{ self.server }'!")
             return pickle.loads(self.client.recv(2048))
         except:
-            print("Verbindung fehlgeschlagen!")
+            print(f"Verbindung zu '{ self.server }' fehlgeschlagen!")
+            return None
 
     def send(self, data):
         try:
@@ -26,3 +27,4 @@ class Network:
             return pickle.loads(self.client.recv(2048))
         except socket.error as e:
             print("Fehler:",e)
+            return None

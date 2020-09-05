@@ -9,8 +9,8 @@ from time import sleep
 
 from player import Player
 
-server = "localhost"
-port = 5555
+server = "0.0.0.0"
+port = 9898
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
