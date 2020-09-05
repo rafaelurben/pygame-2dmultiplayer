@@ -1,11 +1,17 @@
 # Original: https://www.youtube.com/channel/UC4JX40jDee_tINbkjycV4Sg
-# Edited: rafaelurben
+# Edited: https://github.com/rafaelurben
+
+# Imports
 
 import pygame
 from time import sleep
 from random import randint
 
-from coordinates import calculate_relative_pos, is_out_of_map, coord_distance, coord_angle
+# Relative Imports
+
+from .coordinates import calculate_relative_pos, is_out_of_map, coord_distance, coord_angle
+
+# Classes
 
 class Player():
     players = []

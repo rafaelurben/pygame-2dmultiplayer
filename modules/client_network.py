@@ -1,17 +1,25 @@
 # Original: https://www.youtube.com/channel/UC4JX40jDee_tINbkjycV4Sg
-# Edited: rafaelurben
+# Edited: https://github.com/rafaelurben
+
+# Imports
 
 import socket
 import pickle
 
+# Classes
+
 class Connection:
     def __init__(self, server="localhost", port=5555, playername=None):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        
         self.server = server
         self.port = port
+
         self.addr = (self.server, self.port)
+
         self.player = None
         self.map = None
+
         self.connect(playername)
 
     def connect(self, playername=None):

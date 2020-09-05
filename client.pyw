@@ -1,12 +1,18 @@
 # Original: https://www.youtube.com/channel/UC4JX40jDee_tINbkjycV4Sg
-# Edited: rafaelurben
+# Edited: https://github.com/rafaelurben
+
+# Imports
 
 import pygame
-from pygame_textinput import TextInput
 
-from client_network import Connection
-from player import Player
-from maps import Map
+# Relative imports
+
+from modules.pygame_textinput import TextInput
+from modules.client_network import Connection
+from modules.player import Player
+from modules.maps import Map
+
+# Variables
 
 DEFAULT_PORT = 9898
 
@@ -14,13 +20,7 @@ server = "localhost"
 port = DEFAULT_PORT
 playername = None
 
-pygame.display.set_caption("Client")
-pygame.base.init()
-
-win = pygame.display.set_mode((400, 100))
-font = pygame.font.SysFont('Arial', 12)
-clock = pygame.time.Clock()
-
+# Functions
 
 def redrawWindow(win, players, mymap):
     win.fill((255,255,255))
@@ -104,7 +104,7 @@ def showStartScreen():
         pygame.display.update()
         clock.tick(30)
 
-def main():
+def showGame():
     global win
 
     try:
@@ -143,7 +143,17 @@ def main():
 
         redrawWindow(win, players, mymap)
 
-showNameChange()
-while True:  
-    showStartScreen()       
-    main()
+# Init
+
+if __name__ == "__main__":
+    pygame.display.set_caption("Client")
+    pygame.base.init()
+
+    win = pygame.display.set_mode((400, 100))
+    font = pygame.font.SysFont('Arial', 12)
+    clock = pygame.time.Clock()
+
+    showNameChange()
+    while True:  
+        showStartScreen()       
+        showGame()

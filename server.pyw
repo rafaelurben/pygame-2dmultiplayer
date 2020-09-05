@@ -1,31 +1,24 @@
 # Original: https://www.youtube.com/channel/UC4JX40jDee_tINbkjycV4Sg
-# Edited: rafaelurben
+# Edited: https://github.com/rafaelurben
+
+# Imports
 
 import socket
 import pickle
 import pygame
+import sys
 from _thread import start_new_thread, interrupt_main
 from random import randint
 from time import sleep
 
-from player import Player
-from maps import Map, DEFAULT_MAP
-from pygame_tables import Table
 
-server = "0.0.0.0"
-port = 9898
+# Relative Imports
 
-mymap = DEFAULT_MAP
+from modules.player import Player
+from modules.maps import Map, DEFAULT_MAP
+from modules.pygame_tables import Table
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-try:
-    s.bind((server, port))
-except socket.error as e:
-    print(str(e))
-
-s.listen(5)
-print("Server gestartet, warte auf Verbindungen...")
+# Functions
 
 def threaded_interface():
     pygame.base.init()
@@ -124,9 +117,10 @@ def threaded_client(conn, addr, playerid):
     conn.close()
     player.hide()
 
-def main():
+def runServer():
     try:
-        start_new_thread(threaded_interface, tuple())
+        if not "nogui" in sys.argv:
+            start_new_thread(threaded_interface, tuple())
 
         currentPlayer = 0
         while True:
@@ -137,5 +131,22 @@ def main():
     except KeyboardInterrupt:
         quit()
 
+# Init
+
 if __name__ == "__main__":
-    main()
+    server = "0.0.0.0"
+    port = 9898
+
+    mymap = DEFAULT_MAP
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        s.bind((server, port))
+    except socket.error as e:
+        print(str(e))
+
+    s.listen(5)
+    print("Server gestartet, warte auf Verbindungen...")
+
+    runServer()

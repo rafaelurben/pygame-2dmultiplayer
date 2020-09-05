@@ -1,8 +1,14 @@
-# Creator: rafaelurben
+# Creator: https://github.com/rafaelurben
+
+# Imports
 
 import pygame
 
+# Init
+
 pygame.font.init()
+
+# Utility Functions
 
 def to_width(string, length, align=False):
     '''Modify a string to match the given length
@@ -17,11 +23,16 @@ def to_width(string, length, align=False):
     else:
         return string.rjust(length) if align else string.ljust(length)
 
+# Classes
+
 class Table:
     '''Create a table in pygame'''
 
     def __init__(self, rows, settings, fontsize=12):
-        '''Example:
+        '''
+        Create tables in PyGame!
+
+        Example:
 
         rows = [
             ("Rafael", 16, "Switzerland"),
@@ -29,11 +40,14 @@ class Table:
         ]
 
         settings = [
-            ("Name", 20, False),
-            ("Age", 3, True),
+            ("Name",    20, False),
+            ("Age",      3, True),
             ("Country", 15, False),
             # (Title, Max length, align (right: True, left: False))
         ]
+
+        table = Table(rows, settings)
+        #table.draw(surface, x, y)
         '''
         self.rows = rows
         self.fontsize = fontsize

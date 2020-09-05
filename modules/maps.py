@@ -1,9 +1,15 @@
-# Creator: rafaelurben
+# Creator: https://github.com/rafaelurben
+
+# Imports
 
 import pygame
 from random import randint
 
-from coordinates import ceil, floor, sin, coord_distance
+# Relative Imports
+
+from .coordinates import ceil, floor, sin, coord_distance
+
+# Classes
 
 class Map:
     def __init__(self, width, height, spawnpoint, mymap=[], spawn_range=5):

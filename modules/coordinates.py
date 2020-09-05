@@ -1,4 +1,6 @@
-# Creator: rafaelurben
+# Creator: https://github.com/rafaelurben
+
+# Imports
  
 import math
 
