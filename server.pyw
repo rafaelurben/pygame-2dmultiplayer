@@ -9,19 +9,20 @@ from random import randint
 from time import sleep
 
 from player import Player
-from maps import Map
+from maps import Map, DEFAULT_MAP
 from pygame_tables import Table
 
 server = "0.0.0.0"
 port = 9898
-mymap = Map(width=800, height=400)
+
+mymap = DEFAULT_MAP
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
     s.bind((server, port))
 except socket.error as e:
-    str(e)
+    print(str(e))
 
 s.listen(5)
 print("Server gestartet, warte auf Verbindungen...")
@@ -29,10 +30,10 @@ print("Server gestartet, warte auf Verbindungen...")
 def threaded_interface():
     pygame.base.init()
 
-    win = pygame.display.set_mode((500, 500))
+    win = pygame.display.set_mode((525, 500), pygame.constants.RESIZABLE)
     clock = pygame.time.Clock()
 
-    pygame.display.set_caption("Server - Players")
+    pygame.display.set_caption(f"Server - Players ({ server }:{ port })")
 
     # commandinput = TextInput()
 
@@ -47,6 +48,8 @@ def threaded_interface():
                 interrupt_main()
                 socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("localhost", port))
                 exit()
+            elif event.type == pygame.constants.VIDEORESIZE:
+                win = pygame.display.set_mode((event.w, event.h), pygame.constants.RESIZABLE)
 
         # Feed it with events every frame
 
@@ -65,6 +68,8 @@ def threaded_interface():
                     (
                         player.id, 
                         player.name, 
+                        player.addr[0],
+                        player.addr[1],
                         player.x, 
                         player.y,
                         player.angle,
@@ -74,9 +79,11 @@ def threaded_interface():
         table_settings = [
             ("ID",       3, True),
             ("Name",    20, False),
+            ("IP",      15, True),
+            ("Port",     6, True),
             ("Coord X",  8, True),
             ("Coord Y",  8, True),
-            ("Angle",    5, True)
+            ("Angle",    5, True),
         ]
 
         table = Table(data, table_settings)
@@ -88,7 +95,8 @@ def threaded_interface():
 def threaded_client(conn, addr, playerid):
     print(f"Neue Verbindung: { addr } (Spieler { playerid })")
 
-    player = Player(id=playerid)
+    x, y = mymap.random_spawn()
+    player = Player(id=playerid, addr=addr, x=x, y=y)
 
     conn.send(pickle.dumps((player, mymap)))
     player.name = pickle.loads(conn.recv(2048))
@@ -105,7 +113,7 @@ def threaded_client(conn, addr, playerid):
 
             conn.send(pickle.dumps(Player.players))
         except Exception as e:
-            print("Fatal exception:",e)
+            print("Error:",e)
             break
 
     print(f"{ player.name } hat die Verbindung verloren.")
@@ -113,11 +121,15 @@ def threaded_client(conn, addr, playerid):
     conn.close()
     player.hide()
 
-start_new_thread(threaded_interface, tuple())
+def main():
+    start_new_thread(threaded_interface, tuple())
 
-currentPlayer = 0
-while True:
-    conn, addr = s.accept()
-    thread = start_new_thread(threaded_client, (conn, addr, currentPlayer))
+    currentPlayer = 0
+    while True:
+        conn, addr = s.accept()
+        start_new_thread(threaded_client, (conn, addr, currentPlayer))
 
-    currentPlayer += 1
+        currentPlayer += 1
+
+if __name__ == "__main__":
+    main()

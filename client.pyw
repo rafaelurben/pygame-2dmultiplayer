@@ -8,8 +8,10 @@ from client_network import Connection
 from player import Player
 from maps import Map
 
+DEFAULT_PORT = 9898
+
 server = "localhost"
-port = 9898
+port = DEFAULT_PORT
 playername = None
 
 pygame.display.set_caption("Client")
@@ -20,8 +22,9 @@ font = pygame.font.SysFont('Arial', 12)
 clock = pygame.time.Clock()
 
 
-def redrawWindow(win, players):
+def redrawWindow(win, players, mymap):
     win.fill((255,255,255))
+    mymap.draw(win)
     for player in players:
         player.draw(win, font)
     pygame.display.update()
@@ -58,12 +61,12 @@ def showNameChange():
         clock.tick(30)
 
 def showStartScreen():
-    global win, server
+    global win, server, port
 
     pygame.display.set_caption("Client")
     win = pygame.display.set_mode((500, 500))
 
-    textinput = TextInput(initial_string=server)
+    textinput = TextInput(initial_string=server+(":"+str(port) if port != DEFAULT_PORT else ""))
 
     while True:
         win.fill((225, 225, 225))
@@ -77,7 +80,17 @@ def showStartScreen():
 
         # Feed it with events every frame
         if textinput.update(events):
-            server = textinput.get_text()
+            text = textinput.get_text()
+
+            if ":" in text:
+                server = text.split(":")[0]
+                try:
+                    port = int(text.split(":")[1])
+                except ValueError:
+                    print("Als Port wurde keine Zahl angegeben!")
+            else:
+                server = text
+
             pygame.display.set_caption("Client - Verbinden...")
             return
 
@@ -128,7 +141,7 @@ def main():
             print("Verbindung zum Server verloren!")
             return
 
-        redrawWindow(win, players)
+        redrawWindow(win, players, mymap)
 
 showNameChange()
 while True:  

@@ -30,10 +30,10 @@ class TextInput:
             max_string_length=-1,
             password=False):
         """
-        :param initial_string: Initial text to be dispygame.constantsayed
+        :param initial_string: Initial text to be displayed
         :param font_family: name or list of names for font (see pygame.font.match_font for precise format)
         :param font_size:  Size of font in pixels
-        :param antialias: Determines if antialias is appygame.constantsied to font (uses more processing power)
+        :param antialias: Determines if antialias is applied to font (uses more processing power)
         :param text_color: Color of text (duh)
         :param cursor_color: Color of cursor
         :param repeat_keys_initial_ms: Time in ms before keys are repeated when held

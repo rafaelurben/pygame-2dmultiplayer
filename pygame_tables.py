@@ -4,16 +4,18 @@ import pygame
 
 pygame.font.init()
 
-def to_width(string, length, right=False):
-    '''Modify a string to match the given length'''
+def to_width(string, length, align=False):
+    '''Modify a string to match the given length
+    
+    :param string: The string to modify
+    :param length: The final length
+    :param align: Align string left (False) or right (True)
+    '''
     string = str(string)
     if len(string) > length:
         return string[:length-2]+".."
     else:
-        if right:
-            return string.rjust(length)
-        else:
-            return string.ljust(length)
+        return string.rjust(length) if align else string.ljust(length)
 
 class Table:
     '''Create a table in pygame'''
