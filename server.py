@@ -28,7 +28,7 @@ print("Server gestartet, warte auf Verbindungen...")
 players = []
 
 def create_random_player(playerid):
-    player = Player(id=playerid, x=randint(50,250), y=randint(50,250), width=50, height=50, color=(randint(0,255),randint(0,255),randint(0,255)))
+    player = Player(id=playerid)
     players.append(player)
     return player
 
@@ -56,6 +56,7 @@ def threaded_client(conn, addr, playerid):
 
     conn.close()
     player.hide()
+    players.remove(player)
 
 currentPlayer = 0
 while True:
