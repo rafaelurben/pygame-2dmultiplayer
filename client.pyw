@@ -17,7 +17,7 @@ playername = None
 pygame.display.set_caption("Client")
 pygame.base.init()
 
-win = pygame.display.set_mode((500, 500))
+win = pygame.display.set_mode((400, 100))
 font = pygame.font.SysFont('Arial', 12)
 clock = pygame.time.Clock()
 
@@ -33,7 +33,7 @@ def showNameChange():
     global win, playername
 
     pygame.display.set_caption("Client - Name festlegen")
-    win = pygame.display.set_mode((500, 500))
+    win = pygame.display.set_mode((400, 100))
 
     textinput = TextInput(initial_string=playername or "")
 
@@ -64,7 +64,7 @@ def showStartScreen():
     global win, server, port
 
     pygame.display.set_caption("Client")
-    win = pygame.display.set_mode((500, 500))
+    win = pygame.display.set_mode((400, 100))
 
     textinput = TextInput(initial_string=server+(":"+str(port) if port != DEFAULT_PORT else ""))
 

@@ -3,6 +3,8 @@
 import pygame
 from random import randint
 
+from coordinates import sin, coord_distance
+
 class Map:
     def __init__(self, width, height, spawnpoint, mymap=[], spawn_range=5):
         self.width = width
@@ -34,9 +36,27 @@ class Map:
         return self.map[int(y/self.block_height)][int(x/self.block_width)]
 
     def touches_black(self, x, y, radius):
-        '''Check if there's black in a given range'''
+        '''Check if there's black in a given pixel range'''
 
-        # Mithilfe Abstand berechnen und Nachbarblöcke abfragen (3x3) Bei Seiten mit x/y Abstand, bei Diagonalen mit Entfernung zu Ecke
+        # d = sin(45)*radius
+
+        blocks = [
+            (x,         y),
+            (x-radius,  y),
+            (x+radius,  y),
+            (x,         y-radius),
+            (x,         y+radius),
+            # (x+d,       y+d),
+            # (x+d,       y-d),
+            # (x-d,       y+d),
+            # (x-d,       y-d),
+        ]
+
+        for block in blocks:
+            if self.get_block_at(*block) == (0,0,0):
+                return True
+
+        # Bei Diagonalen Entfernung zu Ecken berechnen
 
         return False
 

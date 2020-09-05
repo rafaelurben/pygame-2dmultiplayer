@@ -93,33 +93,33 @@ class Player():
     def process(self, mymap, data):
         '''Server: Process the changes uploaded by the player'''
 
-        x, y = self.x, self.y
-
         if data["move_left"]:
             self.angle = (self.angle - 2) % 360
 
         if data["move_right"]:
             self.angle = (self.angle + 2) % 360
 
-        if data["move_up"] and not data["move_down"]:
-            newpos = self.calculate_relative_pos(0, int(self.velocity))
-            if not self.out_of_map(mymap, *newpos):
-                x, y = newpos
-        if data["move_down"] and not data["move_up"]:
-            newpos = self.calculate_relative_pos(0, -int(self.velocity/2))
-            if not self.out_of_map(mymap, *newpos):
-                x, y = newpos
-
-        if (x != self.x or y != self.y) and self.can_move_to(x, y, mymap):
-            self.x, self.y = x, y
+        if data["move_up"] != data["move_down"]:
+            if data["move_up"]:
+                newpos = self.calculate_relative_pos(0, int(self.velocity))
+                
+            elif data["move_down"]:
+                newpos = self.calculate_relative_pos(0, -int(self.velocity/2))
+                
+            if self.can_move_to(*newpos, mymap):
+                self.x, self.y = newpos
 
     def can_move_to(self, x, y, mymap):
         '''Server: Checks if player would touch the map or another player'''
 
-        # Check for map 
+        # Check for map border
 
-        block = mymap.get_block_at(x, y)
-        if block == (0, 0, 0):
+        if self.out_of_map(mymap, x, y):
+            return False
+
+        # Check for map blocks
+
+        if mymap.touches_black(x, y, self.radius):
             return False
         
         # Check for players

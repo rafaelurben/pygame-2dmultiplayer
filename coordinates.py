@@ -7,9 +7,9 @@ import math
 sin = lambda a: math.sin(math.radians(a))
 cos = lambda a: math.cos(math.radians(a))
 tan = lambda a: math.tan(math.radians(a))
-asin = lambda a: math.asin(math.radians(a))
-acos = lambda a: math.acos(math.radians(a))
-atan = lambda a: math.atan(math.radians(a))
+asin = lambda v: math.degrees(math.asin(v))
+acos = lambda v: math.degrees(math.acos(v))
+atan = lambda v: math.degrees(math.atan(v))
 
 # Utility Functions
 
