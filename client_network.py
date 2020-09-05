@@ -4,22 +4,24 @@
 import socket
 import pickle
 
-class ClientNetwork:
-    def __init__(self, server="localhost", port=5555):
+class Connection:
+    def __init__(self, server="localhost", port=5555, playername=None):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server = server
         self.port = port
         self.addr = (self.server, self.port)
-        self.player, self.map = self.connect()
+        self.player = None
+        self.map = None
+        self.connect(playername)
 
-    def connect(self):
+    def connect(self, playername=None):
         try:
             self.client.connect(self.addr)
             print(f"Verbunden zu '{ self.server }'!")
-            return pickle.loads(self.client.recv(2048))
+            self.player, self.map = pickle.loads(self.client.recv(2048))
+            self.client.send(pickle.dumps(playername or self.player.name))
         except:
             print(f"Verbindung zu '{ self.server }' fehlgeschlagen!")
-            return None
 
     def send_receive(self, data):
         try:

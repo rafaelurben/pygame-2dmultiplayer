@@ -8,6 +8,8 @@ from random import randint
 from coordinates import calculate_relative_pos, is_out_of_map
 
 class Player():
+    players = []
+
     def __init__(self, id, x=None, y=None, radius=None, color=None):
         self.id = id
         self.name = "Spieler "+str(id)
@@ -23,6 +25,8 @@ class Player():
         self.velocity = 3
 
         self.hidden = False
+
+        self.players.append(self)
 
     @property
     def coords(self):
@@ -46,16 +50,15 @@ class Player():
     def draw(self, win, font=None):
         '''Client: Draws the player'''
 
-        if not self.hidden:
-            pygame.draw.circle(win, self.color, self.coords, self.radius)
+        pygame.draw.circle(win, self.color, self.coords, self.radius)
 
-            triangle = (self.calculate_relative_pos(0, self.radius-2), self.calculate_relative_pos(120, self.radius-2), self.calculate_relative_pos(240, self.radius-2))
-            pygame.draw.polygon(win, self.color_inverted, triangle)
+        triangle = (self.calculate_relative_pos(0, self.radius-2), self.calculate_relative_pos(120, self.radius-2), self.calculate_relative_pos(240, self.radius-2))
+        pygame.draw.polygon(win, self.color_inverted, triangle)
 
-            pygame.draw.line(win, self.color, self.coords, self.calculate_relative_pos(0, 2*self.radius))
+        pygame.draw.line(win, self.color, self.coords, self.calculate_relative_pos(0, 2*self.radius))
 
-            if font:
-                win.blit(font.render(self.name, True, (0,0,0)), (self.x + self.radius + 5, self.y + self.radius + 5))
+        if font:
+            win.blit(font.render(self.name, True, (0,0,0)), (self.x + self.radius + 5, self.y + self.radius + 5))
 
     def get_update_data(self, keys):
         '''Client: Upload changes and download players'''
@@ -72,9 +75,12 @@ class Player():
     def hide(self, delay=3):
         '''Server: Makes the player gray and makes him disappear after delay'''
 
-        self.color = (200,200,200)
-        sleep(delay)
         self.hidden = True
+        self.color = (200,200,200)
+        
+        sleep(delay)
+
+        self.players.remove(self)
 
     def process(self, mymap, data):
         '''Server: Process the changes uploaded by the player'''
@@ -90,4 +96,3 @@ class Player():
 
         if data["move_down"] and not self.out_of_map(mymap, *self.calculate_relative_pos(0, -int(self.velocity/2))):
             self.x, self.y = self.calculate_relative_pos(0, -int(self.velocity/2))
-

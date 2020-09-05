@@ -4,23 +4,12 @@ import math
 
 # Helper functions
 
-def sin(a):
-    return math.sin(math.radians(a))
-
-def cos(a):
-    return math.cos(math.radians(a))
-
-def tan(a):
-    return math.tan(math.radians(a))
-
-def asin(a):
-    return math.asin(math.radians(a))
-
-def acos(a):
-    return math.acos(math.radians(a))
-
-def atan(a):
-    return math.atan(math.radians(a))
+sin = lambda a: math.sin(math.radians(a))
+cos = lambda a: math.cos(math.radians(a))
+tan = lambda a: math.tan(math.radians(a))
+asin = lambda a: math.asin(math.radians(a))
+acos = lambda a: math.acos(math.radians(a))
+atan = lambda a: math.atan(math.radians(a))
 
 # Utility Functions
 
