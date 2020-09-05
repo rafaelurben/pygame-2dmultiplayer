@@ -10,6 +10,7 @@ from time import sleep
 
 from player import Player
 from maps import Map
+from pygame_tables import Table
 
 server = "0.0.0.0"
 port = 9898
@@ -29,7 +30,6 @@ def threaded_interface():
     pygame.base.init()
 
     win = pygame.display.set_mode((500, 500))
-    font = pygame.font.SysFont('Arial', 12)
     clock = pygame.time.Clock()
 
     pygame.display.set_caption("Server - Players")
@@ -56,13 +56,31 @@ def threaded_interface():
         # Blit its surface onto the screen
 
         # win.blit(commandinput.get_surface(), (10, 30))
-
-        y = 10
+        
+        data = []
 
         for player in Player.players:
             if not player.hidden:
-                win.blit(font.render(f"{ str(player.id).zfill(2) }: { player.name }", True, (0,0,0)), (10,y))
-                y += 15
+                data.append(
+                    (
+                        player.id, 
+                        player.name, 
+                        player.x, 
+                        player.y,
+                        player.angle,
+                    )
+                )
+
+        table_settings = [
+            ("ID",       3, True),
+            ("Name",    20, False),
+            ("Coord X",  8, True),
+            ("Coord Y",  8, True),
+            ("Angle",    5, True)
+        ]
+
+        table = Table(data, table_settings)
+        table.draw(win)
 
         pygame.display.update()
         clock.tick(60)
