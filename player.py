@@ -5,7 +5,7 @@ import pygame
 from time import sleep
 from random import randint
 
-from coordinates import calculate_relative_pos, is_out_of_map
+from coordinates import calculate_relative_pos, is_out_of_map, coord_distance, coord_angle
 
 class Player():
     players = []
@@ -30,10 +30,12 @@ class Player():
 
     @property
     def coords(self):
+        '''Client: Get current coords'''
         return (int(self.x), int(self.y))
 
     @property
     def color_inverted(self):
+        '''Client: Get the inverted color'''
         return (255-self.color[0],255-self.color[1],255-self.color[2])
 
     def calculate_relative_pos(self, relative_angle=0, distance=None):
@@ -45,6 +47,8 @@ class Player():
         return calculate_relative_pos(self.x, self.y, angle, distance)
 
     def out_of_map(self, mymap, x, y):
+        '''Client: Check if a coordinate is out of map'''
+
         return is_out_of_map(x, y, mymap.width, mymap.height, self.radius)
 
     def draw(self, win, font=None):
@@ -85,14 +89,35 @@ class Player():
     def process(self, mymap, data):
         '''Server: Process the changes uploaded by the player'''
 
+        x, y = self.x, self.y
+
         if data["move_left"]:
             self.angle = (self.angle - 2) % 360
 
         if data["move_right"]:
             self.angle = (self.angle + 2) % 360
 
-        if data["move_up"] and not self.out_of_map(mymap, *self.calculate_relative_pos(0, int(self.velocity))):
-            self.x, self.y = self.calculate_relative_pos(0, int(self.velocity))
+        if data["move_up"]:
+            newpos = self.calculate_relative_pos(0, int(self.velocity))
+            if not self.out_of_map(mymap, *newpos):
+                x, y = newpos
+        if data["move_down"]:
+            newpos = self.calculate_relative_pos(0, -int(self.velocity/2))
+            if not self.out_of_map(mymap, *newpos):
+                x, y = newpos
 
-        if data["move_down"] and not self.out_of_map(mymap, *self.calculate_relative_pos(0, -int(self.velocity/2))):
-            self.x, self.y = self.calculate_relative_pos(0, -int(self.velocity/2))
+        if (x != self.x or y != self.y) and self.can_move_to(x, y):
+            self.x, self.y = x, y
+
+    def can_move_to(self, x, y):
+        '''Server: Checks if player would touch another player'''
+        players = list(self.players)
+        players.remove(self)
+
+        for player in players:
+            distance = coord_distance(x, y, *player.coords)
+            if distance < self.radius + player.radius:
+                return False
+        return True
+
+        

@@ -42,11 +42,10 @@ def threaded_interface():
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.constants.QUIT:
-                print("Das Fenster wurde geschlossen.")
+                print("Das Fenster wurde geschlossen. Server wird beendet...")
                 pygame.base.quit()
                 interrupt_main()
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("localhost", port))
-                s.close()
+                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("localhost", port))
                 exit()
 
         # Feed it with events every frame
@@ -87,7 +86,8 @@ def threaded_client(conn, addr, playerid):
                 player.process(mymap, data)
 
             conn.send(pickle.dumps(Player.players))
-        except:
+        except Exception as e:
+            print("Fatal exception:",e)
             break
 
     print(f"{ player.name } hat die Verbindung verloren.")

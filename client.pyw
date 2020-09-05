@@ -98,7 +98,7 @@ def main():
         conn = Connection(server=server, port=port, playername=playername)
 
         player = conn.player
-        pygame.display.set_caption("Client - "+playername or player.name)
+        pygame.display.set_caption("Client - "+player.name)
 
         mymap = conn.map
         win = pygame.display.set_mode((mymap.width, mymap.height))
@@ -124,7 +124,7 @@ def main():
 
         players = conn.send_receive(player.get_update_data(keys))
 
-        if not players:
+        if players is None:
             print("Verbindung zum Server verloren!")
             return
 

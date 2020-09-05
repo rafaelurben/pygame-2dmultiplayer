@@ -18,15 +18,24 @@ class Connection:
         try:
             self.client.connect(self.addr)
             print(f"Verbunden zu '{ self.server }'!")
-            self.player, self.map = pickle.loads(self.client.recv(2048))
-            self.client.send(pickle.dumps(playername or self.player.name))
+            
+            self.player, self.map = pickle.loads(self.client.recv(2048))    
+            self.player.name = playername if playername else self.player.name
+            self.client.send(pickle.dumps(self.player.name))
         except:
             print(f"Verbindung zu '{ self.server }' fehlgeschlagen!")
 
     def send_receive(self, data):
         try:
             self.client.send(pickle.dumps(data))
-            return pickle.loads(self.client.recv(2048))
+
+            d = self.client.recv(2048)
+            try:
+                d = pickle.loads(d)
+                return d
+            except EOFError as e:
+                print("Pickle Error:",e,"\nReceived data:",d)
+                return []
         except socket.error as e:
             print("Fehler:",e)
             return None

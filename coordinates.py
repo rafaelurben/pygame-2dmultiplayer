@@ -25,3 +25,9 @@ def calculate_relative_pos(x, y, angle, distance):
 
 def is_out_of_map(x, y, width, height, min_distance=0):
     return x-min_distance < 0 or y-min_distance < 0 or x+min_distance > width or y+min_distance > height
+
+def coord_distance(x, y, x2, y2):
+    return math.sqrt(math.pow(x-x2, 2) + math.pow(y-y2, 2))
+
+def coord_angle(x, y, x2, y2):
+    return atan(y-y2/x-x2)
