@@ -116,8 +116,8 @@ def showGame():
         mymap = conn.map
         win = pygame.display.set_mode((mymap.width, mymap.height))
 
-    except (AttributeError, TypeError):
-        print("Verbindung konnte nicht hergestellt werden!")
+    except (AttributeError, TypeError) as e:
+        print("Verbindung konnte nicht hergestellt werden! Error:",e)
         return
 
     while True:

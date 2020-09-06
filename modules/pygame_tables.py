@@ -1,4 +1,8 @@
-# Creator: https://github.com/rafaelurben
+"""
+Copyright 2020, Rafael Urben, rafaelurben@gmail.com, All rights reserved.
+
+Borrowed from https://github.com/rafaelurben/pygame-tables under the MIT license.
+"""
 
 # Imports
 
@@ -49,12 +53,17 @@ class Table:
         table = Table(rows, settings)
         #table.draw(surface, x, y)
         '''
+
         self.rows = rows
         self.fontsize = fontsize
         self.settings = settings
         self.font = pygame.font.SysFont('Courier', fontsize)
 
     def draw(self, win, x=10, y=10):
+        '''
+        Draw the table on a PyGame Surface starting at specified position
+        '''
+
         win.blit(self.font.render(" ".join(to_width(s[0], s[1], s[2]) for s in self.settings), True, (0,0,0)), (x, y))
         y += self.fontsize+3
 

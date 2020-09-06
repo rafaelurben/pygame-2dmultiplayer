@@ -7,12 +7,13 @@ This is a test project based on a video series by "techwithtim".
 ## Features
 
 - 2d map rendering
+- Load maps from image
 - Multiplayer
 - Collision detection
 - Serverside calculations
 
-## ToDO
+## ToDo
 
 - Spawntrapping fix -> Auto-find free location
-- Create map from image
+- Sockets - allow bigger data to be sent
 - Exe files

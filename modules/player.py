@@ -9,7 +9,7 @@ from random import randint
 
 # Relative Imports
 
-from .coordinates import calculate_relative_pos, is_out_of_map, coord_distance, coord_angle
+from .coordinates import calculate_relative_pos, coord_distance, coord_angle
 
 # Classes
 
@@ -55,11 +55,6 @@ class Player():
         distance = distance or self.radius 
 
         return calculate_relative_pos(self.x, self.y, angle, distance)
-
-    def out_of_map(self, mymap, x, y):
-        '''Client: Check if a coordinate is out of map'''
-
-        return is_out_of_map(x, y, mymap.width, mymap.height, self.radius)
 
     def draw(self, win, font=None):
         '''Client: Draws the player'''
@@ -118,14 +113,9 @@ class Player():
     def can_move_to(self, x, y, mymap):
         '''Server: Checks if player would touch the map or another player'''
 
-        # Check for map border
-
-        if self.out_of_map(mymap, x, y):
-            return False
-
         # Check for map blocks
 
-        if mymap.touches_black(x, y, self.radius):
+        if not mymap.can_go_to(x, y, self.radius):
             return False
         
         # Check for players
