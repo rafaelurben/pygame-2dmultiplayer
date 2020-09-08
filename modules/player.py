@@ -16,23 +16,21 @@ from .coordinates import calculate_relative_pos, coord_distance, coord_angle
 class Player():
     players = []
 
-    def __init__(self, id, x=None, y=None, radius=None, color=None, addr=None):
+    def __init__(self, id, addr, x=None, y=None, radius=15, color=None):
         self.id = id
-        self.name = "Spieler "+str(id)
-
-        self.radius = radius or 15
-        self.angle = 270
-
-        self.x = x or randint(50,250)
-        self.y = y or randint(50,250)
-
-
-        self.color = color or (randint(0,255), randint(0,255), randint(0,255))
-        self.velocity = 3
-
-        self.hidden = False
+        self.name = "Player "+str(id)
 
         self.addr = addr
+
+        self.x = x or randint(50, 250)
+        self.y = y or randint(50, 250)
+
+        self.radius = radius
+        self.angle = 270
+        self.velocity = 3
+
+        self.color = color or (randint(0,255), randint(0,255), randint(0,255))
+        self.hidden = False
 
         self.players.append(self)
 

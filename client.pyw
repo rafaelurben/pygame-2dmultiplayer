@@ -30,9 +30,11 @@ def redrawWindow(win, players, mymap):
     pygame.display.update()
 
 def showNameChange():
+    print("[Client] - Please enter your name...")
+
     global win, playername
 
-    pygame.display.set_caption("Client - Name festlegen")
+    pygame.display.set_caption("Client [Setup]")
     win = pygame.display.set_mode((400, 100))
 
     textinput = TextInput(initial_string=playername or "")
@@ -43,27 +45,33 @@ def showNameChange():
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.constants.QUIT:
-                print("Das Fenster wurde geschlossen.")
+                print("[Client] - Window closed! Exiting...")
                 pygame.base.quit()
                 exit()
 
         # Feed it with events every frame
         if textinput.update(events):
-            playername = textinput.get_text()
-            pygame.display.set_caption("Name wurde geändert!")
+            newname = textinput.get_text().strip()
+            if newname:
+                playername = newname
+                print(f"[Client] - Name was set to '{ newname }'.")
+            else:
+                print("[Client] - No name specified.")
             return
 
         # Blit its surface onto the screen
-        win.blit(font.render("Spielername: ", True, (0,0,0)), (10,10))
+        win.blit(font.render("Name: ", True, (0,0,0)), (10,10))
         win.blit(textinput.get_surface(), (10, 30))
 
         pygame.display.update()
         clock.tick(30)
 
 def showStartScreen():
+    print("[Client] - Please enter server IP address (and port)...")
+
     global win, server, port
 
-    pygame.display.set_caption("Client")
+    pygame.display.set_caption("Client"+(" - "+playername if playername else "")+" [Menu]")
     win = pygame.display.set_mode((400, 100))
 
     textinput = TextInput(initial_string=server+(":"+str(port) if port != DEFAULT_PORT else ""))
@@ -74,7 +82,7 @@ def showStartScreen():
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.constants.QUIT:
-                print("Das Fenster wurde geschlossen.")
+                print("[Client] - Window closed! Exiting...")
                 pygame.base.quit()
                 exit()
 
@@ -87,11 +95,11 @@ def showStartScreen():
                 try:
                     port = int(text.split(":")[1])
                 except ValueError:
-                    print("Als Port wurde keine Zahl angegeben!")
+                    print("[Client] - The port isn't a number! Ignoring it.")
             else:
                 server = text
-
-            pygame.display.set_caption("Client - Verbinden...")
+            
+            print(f"[Client] - Server set to '{ server }:{ port }'!")
             return
 
         # Blit its surface onto the screen
@@ -99,7 +107,7 @@ def showStartScreen():
         win.blit(textinput.get_surface(), (10, 30))
 
         if playername:
-            win.blit(font.render(f"Spielername: { playername }", True, (0,0,0)), (10,60))
+            win.blit(font.render(f"Name: { playername }", True, (0,0,0)), (10,60))
 
         pygame.display.update()
         clock.tick(30)
@@ -108,16 +116,21 @@ def showGame():
     global win
 
     try:
+        pygame.display.set_caption("Client"+(" - "+playername if playername else "")+" [Connecting...]")
+
         conn = Connection(server=server, port=port, playername=playername)
 
+        if conn.player is None or conn.map is None:
+            return
+
         player = conn.player
-        pygame.display.set_caption("Client - "+player.name)
+        pygame.display.set_caption("Client - "+player.name+" [Game]")
 
         mymap = conn.map
         win = pygame.display.set_mode((mymap.width, mymap.height))
 
-    except (AttributeError, TypeError) as e:
-        print("Verbindung konnte nicht hergestellt werden! Error:",e)
+    except Exception as e:
+        print("[Client] - An error occured! Error:",e)
         return
 
     while True:
@@ -125,20 +138,20 @@ def showGame():
 
         for event in pygame.event.get():
             if event.type == pygame.constants.QUIT:
-                print("Fenster wurde geschlossen!")
+                print("[Client] - Window closed! Exiting...")
                 pygame.base.quit()
                 exit()
 
         keys = pygame.key.get_pressed()
 
         if keys[pygame.constants.K_ESCAPE]:
-            print("Spiel durch ESC verlassen!")
+            print("[Client] - Pressed ESC! Left game!")
             return
 
         players = conn.send_receive(player.get_update_data(keys))
 
         if players is None:
-            print("Verbindung zum Server verloren!")
+            print("[Client] - Connection lost!")
             return
 
         redrawWindow(win, players, mymap)
@@ -146,12 +159,14 @@ def showGame():
 # Init
 
 if __name__ == "__main__":
-    pygame.display.set_caption("Client")
+    pygame.display.set_caption("Client [Initialize...]")
     pygame.base.init()
 
     win = pygame.display.set_mode((400, 100))
     font = pygame.font.SysFont('Arial', 12)
     clock = pygame.time.Clock()
+
+    print("\n\n")
 
     showNameChange()
     while True:  
