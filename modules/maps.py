@@ -4,7 +4,6 @@
 
 import pygame
 import numpy
-import os.path
 from PIL import Image
 from random import randint
 
@@ -150,8 +149,3 @@ red     = (255,   0,   0)
 green   = (  0, 255,   0)
 blue    = (  0,   0, 255)
 
-# Maps
-
-DEFAULT_MAP = Map.from_file(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "map_textures", "default.png"))
-
-DEBUG_MAP = Map.from_file(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "map_textures", "debug.png"))

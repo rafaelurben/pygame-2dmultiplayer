@@ -14,8 +14,13 @@ from argparse import ArgumentParser
 # Relative Imports
 
 from modules.player import Player
-from modules.maps import Map, DEFAULT_MAP
+from modules.maps import Map
 from modules.pygame_tables import Table
+
+# Maps
+
+DEFAULT_MAP = Map.from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "map_textures", "default.png"))
+DEBUG_MAP = Map.from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "map_textures", "debug.png"))
 
 # Variables
 
