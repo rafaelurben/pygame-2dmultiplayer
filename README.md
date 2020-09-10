@@ -8,9 +8,9 @@ This is a test project based on a video series by "techwithtim".
 - 2D Rendering
 - Multiplayer via sockets
 - Calculations on the server
+- Executable files (.exe) for Windows users without Python
 
 ## ToDo
 
-- Spawntrapping fix -> Auto find free location
+- Spawntrapping fix -> Automatically find free location
 - Sockets - allow bigger data to be sent (bigger maps, more players)
-- Create .exe file for easy playing
